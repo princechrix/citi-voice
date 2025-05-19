@@ -6,87 +6,143 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
-datasource db { 
+datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
+} 
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role
-  agencyId  String?    // Nullable for super admin
-  agency    Agency?    @relation(fields: [agencyId], references: [id])
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid()) @db.Uuid
+  name       String 
+  email      String   @unique
+  password   String?
+  isTempPassword Boolean @default(true) // Track if user is using temporary password
+  role       Role
+  agencyId   String?  @db.Uuid // Nullable for super admin
+  agency     Agency?  @relation(fields: [agencyId], references: [id])
+  isVerified Boolean  @default(false)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
 
-  complaintsSubmitted Complaint[] @relation("CitizenComplaints")
-  responses           Response[]
-  assignments         Assignment[]
+  responses            Response[]
+  assignments          Assignment[]
+  fromComplaintHistory ComplaintHistory[] @relation("FromUser")
+  toComplaintHistory   ComplaintHistory[] @relation("ToUser")
 }
 
 model Agency {
-  id        String   @id @default(uuid())
-  name      String
-  description String?
-  categories Category[]
-  users     User[] // Admins & Staff
+  id          String @id @default(uuid()) @db.Uuid
+  name        String
+  acronym     String
+  isActive    Boolean @default(true)
+  description String
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+
+  // Reverse relations
+  primaryCategories         Category[]                @relation("PrimaryAgency")
+  secondaryCategories       Category[]                @relation("SecondaryAgencies")
+  categorySecondaryAgencies CategorySecondaryAgency[]
+  fromComplaintHistory      ComplaintHistory[]        @relation("FromAgency")
+  toComplaintHistory        ComplaintHistory[]        @relation("ToAgency")
+
+  users      User[]
   complaints Complaint[]
+
+  @@map("agencies")
+}
+
+model CategorySecondaryAgency {
+  categoryId String @db.Uuid
+  agencyId   String @db.Uuid
+
+  category Category @relation(fields: [categoryId], references: [id])
+  agency   Agency   @relation(fields: [agencyId], references: [id])
+
+  @@id([categoryId, agencyId])
+  @@map("category_secondary_agency")
 }
 
 model Category {
-  id        String   @id @default(uuid())
-  name      String
-  agencyId  String
-  agency    Agency   @relation(fields: [agencyId], references: [id])
-  complaints Complaint[]
+  id   String @id @default(uuid()) @db.Uuid
+  name String
+  description String?
+  createdAt DateTime @default(now())
+
+  primaryAgency             Agency?                   @relation("PrimaryAgency", fields: [primaryAgencyId], references: [id])
+  primaryAgencyId           String?                   @db.Uuid
+  secondaryAgencies         Agency[]                  @relation("SecondaryAgencies")
+  categorySecondaryAgencies CategorySecondaryAgency[]
+  complaints                Complaint[]
 }
 
 model Complaint {
-  id          String   @id @default(uuid())
-  subject     String
-  description String
-  citizenEmail String
-  citizenName  String
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
-  agencyId    String
-  agency      Agency   @relation(fields: [agencyId], references: [id])
-  status      ComplaintStatus @default(SUBMITTED)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  assignedTo  Assignment?
-  responses   Response[]
+  id               String             @id @default(uuid()) @db.Uuid
+  subject          String
+  description      String
+  citizenEmail     String
+  citizenName      String
+  trackingCode     String?             @unique 
+  categoryId       String             @db.Uuid
+  category         Category           @relation(fields: [categoryId], references: [id])
+  agencyId         String             @db.Uuid
+  agency           Agency             @relation(fields: [agencyId], references: [id])
+  status           ComplaintStatus    @default(PENDING)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  assignedTo       Assignment?
+  responses        Response[]
+  complaintHistory ComplaintHistory[]
+}
 
-  citizen     User?    @relation("CitizenComplaints", fields: [citizenId], references: [id])
-  citizenId   String?
+model ComplaintHistory {
+  id           String                 @id @default(uuid()) @db.Uuid
+  complaintId  String                 @db.Uuid
+  fromUserId   String?                @db.Uuid // Nullable if it's the first assignment
+  toUserId     String?                @db.Uuid
+  fromAgencyId String?                @db.Uuid // Nullable for first assignment
+  toAgencyId   String?                @db.Uuid
+  action       ComplaintHistoryAction
+  metadata     String?                // JSON string to store additional information
+  timestamp    DateTime               @default(now())
+
+  complaint  Complaint @relation(fields: [complaintId], references: [id])
+  fromUser   User?     @relation("FromUser", fields: [fromUserId], references: [id])
+  toUser     User?     @relation("ToUser", fields: [toUserId], references: [id])
+  fromAgency Agency?   @relation("FromAgency", fields: [fromAgencyId], references: [id])
+  toAgency   Agency?   @relation("ToAgency", fields: [toAgencyId], references: [id])
 }
 
 model Assignment {
-  id          String   @id @default(uuid())
-  complaintId String   @unique
-  staffId     String
+  id          String   @id @default(uuid()) @db.Uuid
+  complaintId String   @unique @db.Uuid
+  staffId     String   @db.Uuid
   assignedAt  DateTime @default(now())
 
-  complaint   Complaint @relation(fields: [complaintId], references: [id])
-  staff       User      @relation(fields: [staffId], references: [id])
+  complaint Complaint @relation(fields: [complaintId], references: [id])
+  staff     User      @relation(fields: [staffId], references: [id])
 }
 
 model Response {
-  id          String   @id @default(uuid())
+  id          String   @id @default(uuid()) @db.Uuid
   message     String
-  complaintId String
-  userId      String
+  complaintId String   @db.Uuid
+  userId      String   @db.Uuid
   createdAt   DateTime @default(now())
 
-  complaint   Complaint @relation(fields: [complaintId], references: [id])
-  user        User      @relation(fields: [userId], references: [id])
+  complaint Complaint @relation(fields: [complaintId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+}
+
+model File {
+  id        String   @id @default(uuid())
+  filename  String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {
@@ -96,8 +152,18 @@ enum Role {
 }
 
 enum ComplaintStatus {
-  SUBMITTED
-  ASSIGNED
+  PENDING
   IN_PROGRESS
   RESOLVED
+  REJECTED
+}
+
+enum ComplaintHistoryAction {
+  SUBMITTED
+  ASSIGNED
+  TRANSFERRED
+  REASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
 }

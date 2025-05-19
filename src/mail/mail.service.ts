@@ -48,6 +48,7 @@ export class MailService {
     const html = this.replaceTemplateVariables(template, {
       name,
       verificationLink,
+      year: `${new Date().getFullYear()}`,
     });
 
     return this.sendMail(
@@ -62,6 +63,7 @@ export class MailService {
     const html = this.replaceTemplateVariables(template, {
       name,
       resetLink,
+      year: `${new Date().getFullYear()}`,
     });
 
     return this.sendMail(
@@ -71,16 +73,127 @@ export class MailService {
     );
   }
 
-  async sendWelcomeEmail(to: string, name: string, loginLink: string): Promise<SentMessageInfo> {
+  async sendWelcomeEmail(
+    to: string,
+    name: string,
+    username: string,
+    password: string,
+  ): Promise<SentMessageInfo> {
     const template = await this.readTemplate('welcome-email.html');
     const html = this.replaceTemplateVariables(template, {
       name,
-      loginLink,
+      username,
+      password,
+      year: `${new Date().getFullYear()}`,
     });
 
     return this.sendMail(
       to,
       'Welcome to Citi Voice!',
+      html,
+    );
+  }
+
+  async sendComplaintConfirmationEmail(
+    to: string,
+    name: string,
+    trackingCode: string,
+    agencyName: string,
+    agencyLogoUrl: string | null,
+    trackingLink: string,
+  ): Promise<SentMessageInfo> {
+    const template = await this.readTemplate('complaint-confirmation.html');
+    const html = this.replaceTemplateVariables(template, {
+      name,
+      trackingCode,
+      agencyName,
+      agencyLogoUrl: agencyLogoUrl ?? 'https://i.imgur.com/aQda867.png',
+      trackingLink,
+      year: `${new Date().getFullYear()}`,
+    });
+
+    return this.sendMail(
+      to,
+      'Complaint Received - Citi Voice',
+      html,
+    );
+  }
+
+  async sendComplaintAssignmentEmail(
+    to: string,
+    name: string,
+    subject: string,
+    agencyName: string,
+    trackingCode: string,
+  ): Promise<SentMessageInfo> {
+    const template = await this.readTemplate('complaint-assignment.html');
+    const html = this.replaceTemplateVariables(template, {
+      name,
+      trackingCode,
+      subject,
+      agencyName,
+      year: `${new Date().getFullYear()}`,
+    });
+
+    return this.sendMail(
+      to,
+      'New Complaint Assignment - Citi Voice',
+      html,
+    );
+  }
+
+  async sendComplaintStatusUpdateEmail(
+    to: string,
+    name: string,
+    subject: string,
+    agencyName: string,
+    trackingCode: string,
+    agencyLogoUrl: string,
+    status: string,
+  ): Promise<SentMessageInfo> {
+    const template = await this.readTemplate('complaint-status-update.html');
+    const html = this.replaceTemplateVariables(template, {
+      name,
+      trackingCode,
+      subject,
+      agencyName,
+      status,
+      agencyLogoUrl: agencyLogoUrl,
+      trackingLink: `http://localhost:3000/track/${trackingCode}`,
+      year: `${new Date().getFullYear()}`,
+    });
+
+    return this.sendMail(
+      to,
+      'Complaint Status Update - Citi Voice',
+      html,
+    );
+  }
+
+  async sendComplaintTransferEmail(
+    to: string,
+    name: string,
+    subject: string,
+    targetAgencyName: string,
+    targetAgencyLogoUrl: string | null,
+    trackingCode: string,
+    transferReason?: string,
+  ): Promise<SentMessageInfo> {
+    const template = await this.readTemplate('complaint-transfer.html');
+    const html = this.replaceTemplateVariables(template, {
+      name,
+      subject,
+      targetAgencyName,
+      targetAgencyLogoUrl: targetAgencyLogoUrl || 'https://i.imgur.com/aQda867.png',
+      trackingCode,
+      transferReason: transferReason || '',
+      trackingLink: `http://localhost:3000/track/${trackingCode}`,
+      year: `${new Date().getFullYear()}`,
+    });
+
+    return this.sendMail(
+      to,
+      'Complaint Transfer Notification - Citi Voice',
       html,
     );
   }

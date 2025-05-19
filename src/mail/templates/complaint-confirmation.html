@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Confirmation - Citi Voice</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748; margin: 0; padding: 0; background-color: #f0f4f8;">
+    <div style="width: 100%; margin: 0; padding: 0; background-color: #ffffff; overflow: hidden;">
+        <div style="text-align: center; padding: 32px 20px 24px 20px; color: #156BEC; position: relative;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 14px; flex-direction: row;">
+                <img src="https://i.imgur.com/aQda867.png" alt="Citi Voice Logo" style="max-width: 48px; height: 48px; display: inline-block; vertical-align: middle; border-radius: 10px; background: white; padding: 4px; box-shadow: 0 2px 8px rgba(21,107,236,0.08);">
+                <span style="font-size: 1.8rem; font-weight: 800; letter-spacing: 1px; color: #156BEC; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">CitiVoice</span>
+            </div>
+        </div>
+        <div style="padding: 40px; background-color: #ffffff;">
+            <p style="margin: 0 0 20px; color: #4a5568; font-size: 16px;">Dear <strong style="color: #156BEC;">{{name}}</strong>,</p>
+            
+            <p style="margin: 0 0 20px; color: #4a5568; font-size: 16px;">Thank you for submitting your complaint through Citi Voice. We have received your complaint and it has been forwarded to the relevant agency for review.</p>
+
+            <div style="background-color: #f8fafc; border-radius: 12px; padding: 20px; margin: 30px 0; border: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <img src="{{agencyLogoUrl}}" alt="{{agencyName}} Logo" style="max-width: 64px; height: 64px; border-radius: 8px;">
+                    <div>
+                        <h3 style="margin: 0 0 4px; color: #2d3748; font-size: 18px;">{{agencyName}}</h3>
+                        <p style="margin: 0; color: #718096; font-size: 14px;">Agency handling your complaint</p>
+                    </div>
+                </div>
+                <div style="background-color: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <p style="margin: 0 0 8px; color: #4a5568; font-size: 14px;"><strong>Your Tracking Code:</strong></p>
+                    <div style="font-size: 20px; font-weight: 600; color: #156BEC; letter-spacing: 1px;">{{trackingCode}}</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{{trackingLink}}" style="display: inline-block; padding: 16px 32px; background-color: #156BEC; color: #ffffff; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 16px; text-align: center; box-shadow: 0 4px 12px rgba(21, 107, 236, 0.3); transition: all 0.3s ease;">Track Your Complaint</a>
+            </div>
+
+            <div style="background-color: #f0f9ff; border-left: 4px solid #156BEC; padding: 15px; border-radius: 0 8px 8px 0; margin: 30px 0;">
+                <p style="margin: 0; color: #156BEC; font-size: 14px;">Please keep your tracking code safe. You'll need it to check the status of your complaint.</p>
+            </div>
+            
+            <p style="margin: 30px 0 0; color: #4a5568; font-size: 16px;">Best regards,<br><strong>The Citi Voice Team</strong></p>
+        </div>
+        <div style="text-align: center; padding: 30px; font-size: 14px; color: #718096; background-color: #f8fafc; border-top: 1px solid #e2e8f0;">
+            <p style="margin: 0 0 10px; color: #718096;">This is an automated message, please do not reply to this email.</p>
+            <p style="margin: 15px 0; color: #718096;">&copy; {{year}} Citi Voice. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html> 

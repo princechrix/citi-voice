@@ -1,11 +1,6 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
-export enum Role {
-  SUPER_ADMIN = 'SUPER_ADMIN',
-  AGENCY_ADMIN = 'AGENCY_ADMIN',
-  STAFF = 'STAFF'
-}
+import { Role } from '../../common/enums/role.enum';
 
 export class RegisterDto {
   @ApiProperty({ example: 'John Doe', description: 'The name of the user' })
@@ -16,9 +11,9 @@ export class RegisterDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'password123', description: 'The password of the user' })
   @IsString()
-  password: string;
+  @IsOptional()
+  password?: string;
 
   @ApiProperty({ enum: Role, example: Role.STAFF, description: 'The role of the user' })
   @IsEnum(Role)
@@ -26,6 +21,10 @@ export class RegisterDto {
 
   @ApiProperty({ required: false, example: '123e4567-e89b-12d3-a456-426614174000', description: 'The agency ID for agency users' })
   @IsOptional()
-  @IsString()
+  @IsUUID()
   agencyId?: string;
+
+  @ApiProperty({ example: 'no example 😅', description: 'The secret key for registration' })
+  @IsString()
+  secretKey: string;
 } 
