@@ -18,7 +18,9 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@prisma/*": ["generated/prisma/*"]
-    }
+      "@prisma/*": ["node_modules/.prisma/client/*"]
+    },
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   }
 }
