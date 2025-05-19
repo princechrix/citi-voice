@@ -159,7 +159,7 @@ export class MailService {
       agencyName,
       status,
       agencyLogoUrl: agencyLogoUrl,
-      trackingLink: `http://localhost:3000/track/${trackingCode}`,
+      trackingLink: `https://citi-voice-frontend-nu.vercel.app/track/${trackingCode}`,
       year: `${new Date().getFullYear()}`,
     });
 
@@ -187,7 +187,7 @@ export class MailService {
       targetAgencyLogoUrl: targetAgencyLogoUrl || 'https://i.imgur.com/aQda867.png',
       trackingCode,
       transferReason: transferReason || '',
-      trackingLink: `http://localhost:3000/track/${trackingCode}`,
+      trackingLink: `https://citi-voice-frontend-nu.vercel.app/track/${trackingCode}`,
       year: `${new Date().getFullYear()}`,
     });
 

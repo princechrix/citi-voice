@@ -78,8 +78,8 @@ export class UsersService {
   @ApiResponse({ status: 200, description: 'Returns the found user' })
   @ApiResponse({ status: 404, description: 'User not found' })
   async findOneByAgencyId(agencyId: string) {
-    const users = await this.prisma.user.findMany({ where: { agencyId } });
-    return {
+    const users = await this.prisma.user.findMany({ where: { agencyId } }); 
+    return { 
       status: 200,
       message: 'Users fetched successfully',
       data: users,

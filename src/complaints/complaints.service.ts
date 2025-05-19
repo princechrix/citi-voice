@@ -123,7 +123,7 @@ export class ComplaintsService {
       trackingCode,
       agency.name,
       agency.logoUrl,
-      `http://localhost:3000/track/${trackingCode}`,
+      `https://citi-voice-frontend-nu.vercel.app/track/${trackingCode}`,
     );
 
     // Send assignment email to admin

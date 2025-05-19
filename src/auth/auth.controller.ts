@@ -38,7 +38,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Verify user email' })
   @ApiResponse({ status: 200, description: 'Email verified successfully' })
   @ApiResponse({ status: 401, description: 'Invalid verification token' })
-  @Redirect('http://localhost:3000/verification/success', 302)
+  @Redirect('https://citi-voice-frontend-nu.vercel.app/verification/success', 302)
   async verifyEmail(@Param('token') token: string, @Param('userId') userId: string) {
     try {
       const result = await this.authService.verifyEmail(userId, token);
@@ -48,7 +48,7 @@ export class AuthController {
         const errorResponse = error.getResponse() as ErrorResponse;
         return { url: errorResponse.redirectUrl };
       }
-      return { url: 'http://localhost:3000/verification/failed' };
+      return { url: 'https://citi-voice-frontend-nu.vercel.app/verification/failed' };
     }
   }
 

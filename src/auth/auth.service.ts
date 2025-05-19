@@ -143,7 +143,7 @@ export class AuthService {
       if (payload.sub !== userId) {
         throw new UnauthorizedException({
           message: 'Invalid verification token',
-          redirectUrl: 'http://localhost:3000/verification/failed',
+          redirectUrl: 'https://citi-voice-frontend-nu.vercel.app/verification/failed',
         });
       }
 
@@ -155,7 +155,7 @@ export class AuthService {
       if (!user) {
         throw new UnauthorizedException({
           message: 'User not found',
-          redirectUrl: 'http://localhost:3000/verification/failed',
+          redirectUrl: 'https://citi-voice-frontend-nu.vercel.app/verification/failed',
         });
       }
 
@@ -181,18 +181,18 @@ export class AuthService {
           name: updatedUser.name,
           role: updatedUser.role,
         },
-        redirectUrl: 'http://localhost:3000/verification/success',
+        redirectUrl: 'https://citi-voice-frontend-nu.vercel.app/verification/success',
       };
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException({
           message: 'Verification token has expired',
-          redirectUrl: 'http://localhost:3000/verification/failed',
+          redirectUrl: 'https://citi-voice-frontend-nu.vercel.app/verification/failed',
         });
       }
       throw new UnauthorizedException({
         message: 'Invalid verification token',
-        redirectUrl: 'http://localhost:3000/verification/failed',
+        redirectUrl: 'https://citi-voice-frontend-nu.vercel.app/verification/failed',
       });
     }
   }
@@ -220,7 +220,7 @@ export class AuthService {
     await this.mailService.sendPasswordResetEmail(
       user.email,
       user.name,
-      `http://localhost:3000/reset/new?token=${resetToken}&userId=${user.id}`,
+      `https://citi-voice-frontend-nu.vercel.app/reset/new?token=${resetToken}&userId=${user.id}`,
     );
 
     return {
