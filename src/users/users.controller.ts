@@ -49,7 +49,7 @@ export class UsersController {
   }
 
   @Post()
-  // @Roles(Role.SUPER_ADMIN)
+  // @Roles(Role.SUPER_ADMIN) 
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({ status: 201, description: 'User successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
