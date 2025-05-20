@@ -106,6 +106,22 @@ export class UsersService {
       }
     });
 
+    // Generate verification token that expires in 15 minutes
+    const verificationToken = await this.jwt.signAsync(
+      {
+        sub: user.id,
+        password: data.password, // Include the password in the token
+      },
+      { expiresIn: '15m' },
+    );
+
+    // Send verification email
+    await this.mailService.sendVerificationEmail(
+      user.email,
+      user.name,
+      `https://citi-voice.onrender.com/api/v1/auth/verify/${verificationToken}/${user.id}`,
+    );
+
     return {
       status: 201,
       message: 'User created successfully',
@@ -209,7 +225,7 @@ export class UsersService {
         await this.mailService.sendVerificationEmail(
           user.email,
           user.name,
-          `http://localhost:3001/api/v1/auth/verify/${verificationToken}/${user.id}`,
+          `https://citi-voice.onrender.com/api/v1/auth/verify/${verificationToken}/${user.id}`,
         );
         
         createdUsers.push(user);
