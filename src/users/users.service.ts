@@ -120,7 +120,7 @@ export class UsersService {
     const verificationToken = await this.jwt.signAsync(
       {
         sub: user.id,
-        password: generatedPassword, // Include the password in the token
+        generatedPassword: generatedPassword, // Include the password in the token
       },
       { expiresIn: '15m' },
     );
