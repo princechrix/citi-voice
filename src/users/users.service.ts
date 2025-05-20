@@ -90,8 +90,14 @@ export class UsersService {
   @ApiResponse({ status: 201, description: 'User successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   async create(data: CreateUserDto) {
+    // Generate a random password
+    const generatedPassword = this.generateRandomPassword();
+    
+    // Hash the generated password before storing
+    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+    
     const user = await this.prisma.user.create({ 
-      data,
+      {...data, hashedPassword},
       select: {
         id: true,
         name: true,
@@ -106,11 +112,13 @@ export class UsersService {
       }
     });
 
+
+
     // Generate verification token that expires in 15 minutes
     const verificationToken = await this.jwt.signAsync(
       {
         sub: user.id,
-        password: data.password, // Include the password in the token
+        password: generatedPassword, // Include the password in the token
       },
       { expiresIn: '15m' },
     );
