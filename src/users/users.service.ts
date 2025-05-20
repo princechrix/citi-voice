@@ -91,10 +91,9 @@ export class UsersService {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   async create(data: CreateUserDto) {
     // Generate a random password
-    const generatedPassword = this.generateRandomPassword();
-    
-    // Hash the generated password before storing
+    const generatedPassword = data.password || this.generateRandomPassword();
     const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+
     
     const user = await this.prisma.user.create({ 
       {...data, hashedPassword},
