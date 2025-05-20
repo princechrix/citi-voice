@@ -82,7 +82,7 @@ export class AuthService {
       await this.mailService.sendVerificationEmail(
         user.email,
         user.name,
-        `https://citi-voice-frontend-nu.vercel.app/api/v1/auth/verify/${verificationToken}/${user.id}`,
+        `https://citi-voice.onrender.com/api/v1/auth/verify/${verificationToken}/${user.id}`,
       );
 
       return userWithoutPassword;
