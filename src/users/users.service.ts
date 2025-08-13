@@ -94,10 +94,12 @@ export class UsersService {
     const generatedPassword = data.password || this.generateRandomPassword();
     const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
-    const user = await this.prisma.user.create({
-      data: {
+
+    
+    const user = await this.prisma.user.create({ 
+      data : {
         ...data,
-        password: hashedPassword,
+        password: hashedPassword
       },
       select: {
         id: true,
