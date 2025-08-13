@@ -90,8 +90,15 @@ export class UsersService {
   @ApiResponse({ status: 201, description: 'User successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   async create(data: CreateUserDto) {
-    const user = await this.prisma.user.create({ 
-      data,
+    // Generate a random password
+    const generatedPassword = data.password || this.generateRandomPassword();
+    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+
+    const user = await this.prisma.user.create({
+      data: {
+        ...data,
+        password: hashedPassword,
+      },
       select: {
         id: true,
         name: true,
@@ -105,6 +112,22 @@ export class UsersService {
         agency: true
       }
     });
+
+    // Generate verification token that expires in 15 minutes
+    const verificationToken = await this.jwt.signAsync(
+      {
+        sub: user.id,
+        generatedPassword: generatedPassword, // Include the password in the token
+      },
+      { expiresIn: '15m' },
+    );
+
+    // Send verification email
+    await this.mailService.sendVerificationEmail(
+      user.email,
+      user.name,
+      `https://citi-voice.onrender.com/api/v1/auth/verify/${verificationToken}/${user.id}`,
+    );
 
     return {
       status: 201,
@@ -209,7 +232,7 @@ export class UsersService {
         await this.mailService.sendVerificationEmail(
           user.email,
           user.name,
-          `http://localhost:3001/api/v1/auth/verify/${verificationToken}/${user.id}`,
+          `https://citi-voice.onrender.com/api/v1/auth/verify/${verificationToken}/${user.id}`,
         );
         
         createdUsers.push(user);

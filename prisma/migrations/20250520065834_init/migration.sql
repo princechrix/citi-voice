@@ -81,6 +81,7 @@ CREATE TABLE "ComplaintHistory" (
     "fromAgencyId" UUID,
     "toAgencyId" UUID,
     "action" "ComplaintHistoryAction" NOT NULL,
+    "metadata" TEXT,
     "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "ComplaintHistory_pkey" PRIMARY KEY ("id")
